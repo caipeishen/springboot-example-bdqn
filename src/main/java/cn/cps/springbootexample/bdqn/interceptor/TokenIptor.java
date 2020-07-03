@@ -2,13 +2,10 @@ package cn.cps.springbootexample.bdqn.interceptor;
 
 import cn.cps.springbootexample.bdqn.annotation.Token;
 import cn.cps.springbootexample.bdqn.context.UserContext;
-import cn.cps.springbootexample.bdqn.core.R;
 import cn.cps.springbootexample.bdqn.entity.user.vo.UserInfoVO;
-import cn.cps.springbootexample.bdqn.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -25,9 +22,6 @@ import java.lang.reflect.Method;
 public class TokenIptor extends HandlerInterceptorAdapter {
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    @Autowired
-    private UserService userService;
 
 	// 进入时的拦截
 	@Override
@@ -63,16 +57,6 @@ public class TokenIptor extends HandlerInterceptorAdapter {
 						//解析JSON数据
 						ObjectMapper objectMapper = new ObjectMapper();
 						UserInfoVO userInfoVO = objectMapper.readValue(content, UserInfoVO.class);
-
-						//查询数据库 验证用户信息
-						userInfoVO = userService.getUserById(userInfoVO.getId());
-
-						if(StringUtils.isEmpty(userInfoVO)) {
-							logger.error("根据TOken查询不到用户信息，Token{}，userInfoVO",userInfoVO.toString());
-							request.setAttribute("token_error", "根据token 在数据库中查询不到用户信息");
-							request.getRequestDispatcher("/user/returnLogin").forward(request, response);
-							return false;
-						}
 
 						//设置用户信息(本次线程中)
 						UserContext.setToken(token);
