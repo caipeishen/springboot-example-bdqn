@@ -27,9 +27,6 @@ public class TokenIptor extends HandlerInterceptorAdapter {
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired
-    private UserService userService;
-
 	@Autowired
 	protected StringRedisTemplate stringRedisTemplate;
 
@@ -67,16 +64,6 @@ public class TokenIptor extends HandlerInterceptorAdapter {
 						//解析JSON数据
 						ObjectMapper objectMapper = new ObjectMapper();
 						UserInfoVO userInfoVO = objectMapper.readValue(content, UserInfoVO.class);
-
-						//查询数据库 验证用户信息
-						userInfoVO = userService.getUserById(userInfoVO.getId());
-
-						if(StringUtils.isEmpty(userInfoVO)) {
-							logger.error("根据TOken查询不到用户信息，Token{}，userInfoVO",userInfoVO.toString());
-							request.setAttribute("token_error", "根据token 在数据库中查询不到用户信息");
-							request.getRequestDispatcher("/user/returnLogin").forward(request, response);
-							return false;
-						}
 
 						//设置用户信息(本次线程中)
 						UserContext.setToken(token);

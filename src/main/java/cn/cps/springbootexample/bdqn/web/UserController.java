@@ -2,6 +2,7 @@ package cn.cps.springbootexample.bdqn.web;
 
 import cn.cps.springbootexample.bdqn.annotation.Token;
 import cn.cps.springbootexample.bdqn.core.R;
+import cn.cps.springbootexample.bdqn.core.ResultCode;
 import cn.cps.springbootexample.bdqn.entity.user.to.UserInfoTO;
 import cn.cps.springbootexample.bdqn.utils.TokenUtils;
 import cn.cps.springbootexample.bdqn.context.UserContext;
@@ -170,7 +171,7 @@ public class UserController {
     public Object returnLogin(HttpServletRequest request) {
         String token_error = (String) request.getAttribute("token_error");
         log.error("tokenIptor校验失败跳转接口.{}",token_error);
-        return R.genFailResult(token_error);
+        return R.genResult(ResultCode.UNAUTHORIZED,token_error);
     }
 
 
