@@ -14,14 +14,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @Author: Cai Peishen
@@ -37,8 +34,6 @@ public class UserController {
     @Resource
     private UserService userService;
 
-    @Autowired
-    private StringRedisTemplate stringRedisTemplate;
 
     @PostMapping("/getUserById")
     @ApiOperation(value="1.根据ID查询用户信息 - BaseMapper自带方法")
@@ -114,7 +109,7 @@ public class UserController {
      */
     @PostMapping("/userLogin")
     @ApiOperation(value="4.用户登录同时返回Token - QueryWrapper定义查询条件")
-    public Object userLogin(@RequestBody UserLoginTO userLoginTO) throws JsonProcessingException {
+    public Object userLogin(@RequestBody UserLoginTO userLoginTO,HttpServletRequest request) throws JsonProcessingException {
         log.info("/userLogin，参数为{}", userLoginTO.toString());
 
         if(userLoginTO==null || userLoginTO.getPassword() == null || userLoginTO.getUsername() == null || "".equals(userLoginTO.getPassword()) || "".equals(userLoginTO.getUsername()) ){
@@ -137,10 +132,7 @@ public class UserController {
         String userInfoVOJson = objectMapper.writeValueAsString(userInfoVO);
 
         //Token 暂时存在session中 后面会存在redis中
-        //request.getSession().setAttribute(Token,userInfoVOJson);
-
-        //Token 存在redis中 并设置有效时间
-        stringRedisTemplate.opsForValue().set(token,userInfoVOJson,60, TimeUnit.SECONDS);
+        request.getSession().setAttribute(token,userInfoVOJson);
 
         return R.genSuccessResult(token);
     }

@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -29,9 +28,6 @@ public class TokenIptor extends HandlerInterceptorAdapter {
 
     @Autowired
     private UserService userService;
-
-	@Autowired
-	protected StringRedisTemplate stringRedisTemplate;
 
 	// 进入时的拦截
 	@Override
@@ -55,8 +51,8 @@ public class TokenIptor extends HandlerInterceptorAdapter {
 					logger.info("token={}",token);
 					if (!StringUtils.isEmpty(token)) {
 
-						//查询Redis
-						String content = stringRedisTemplate.opsForValue().get(token);
+						//查询Session
+						String content = (String)request.getSession().getAttribute(token);
 
 						if(StringUtils.isEmpty(content)){
 							logger.error("token已失效或者为空");
