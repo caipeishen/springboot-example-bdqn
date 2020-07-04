@@ -60,7 +60,7 @@ public class UserController {
 
 
     /**
-     * 当我们多个接口 公用一个对象当参数时，我们无法区分 各个接口对应的参数
+     * 当我们多个接口 共用一个对象当参数时，我们无法区分 各个接口对应的参数
      * 这时我们可以使用 @ApiImplicitParam 仅仅是为了在swagger文档中 提示那些参数是需要输入的
      * 在swagger的@ApiImplicitParam中输入数据 发送请求 后台并不处理；因为我们后台使用的对象接受 仍采用类型为对象的参数
      * @param userInfoTO
@@ -164,6 +164,7 @@ public class UserController {
 
     /**
      * token校验失败跳转接口
+     * 添加了Token注解，我们在自定义的拦截器中会进行一些Token的处理
      * @param request
      * @return
      */
